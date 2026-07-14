@@ -12,6 +12,10 @@ each with its own `node_modules`, run separately.
 - `frontend/` — Next.js 16 (App Router) + React 19, TypeScript, Tailwind v4, shadcn/ui (base-ui primitives).
 - `docs/api/postman_collection.json` — Postman collection for the API.
 - `docker-compose.yml` (repo root) — local MySQL only; there is no containerized app service.
+- `.gitignore` (repo root) — ignores `node_modules/`, both packages' env files (`.env`, `.env.local` —
+  only the `.env.example` templates are tracked), build output (`frontend/.next/`, `frontend/out/`,
+  `frontend/.turbo/`, `backend/dist/`, `backend/build/`), `*.log`, and editor/IDE dirs (`.vscode/`,
+  `.idea/`, `.claude/`). Don't try to commit anything under these paths.
 
 There is no test framework configured in either package (no test runner, no `test` script). Do not assume Jest/Vitest
 are available.
