@@ -49,6 +49,7 @@ model User {
   assignedTasks     Task[]          @relation("TaskAssignee")
   createdTasks      Task[]          @relation("TaskCreator")
   taskStatusChanges TaskStatusLog[]
+  comments          TaskComment[]
 
   @@index([role])
 }
@@ -105,6 +106,7 @@ model Task {
   creator   User   @relation("TaskCreator", fields: [creatorId], references: [id])
 
   statusLogs TaskStatusLog[]
+  comments   TaskComment[]
 
   @@index([projectId])
   @@index([assigneeId])
@@ -121,6 +123,19 @@ model TaskStatusLog {
 
   task      Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
   changedBy User @relation(fields: [changedById], references: [id])
+
+  @@index([taskId])
+}
+
+model TaskComment {
+  id        String   @id @default(cuid())
+  taskId    String
+  authorId  String
+  body      String   @db.Text
+  createdAt DateTime @default(now())
+
+  task   Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  author User @relation(fields: [authorId], references: [id])
 
   @@index([taskId])
 }
