@@ -1,7 +1,11 @@
+import Link from "next/link";
 import { serverApiFetch } from "@/lib/api";
-import type { DashboardSummary } from "@/types";
+import type { DashboardSummary, Task } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { TaskStatusBadge } from "@/components/shared/StatusBadges";
+import { TaskPriorityBadge, TaskStatusBadge } from "@/components/shared/StatusBadges";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { TaskStatusControl } from "@/components/tasks/TaskStatusControl";
+import { formatDate } from "@/lib/dates";
 import type { TaskStatus } from "@/types";
 
 const TASK_STATUSES: TaskStatus[] = ["TODO", "IN_PROGRESS", "IN_REVIEW", "DONE"];
@@ -19,6 +23,7 @@ function StatCard({ label, value }: { label: string; value: number }) {
 
 export default async function DashboardPage() {
   const summary = await serverApiFetch<DashboardSummary>("/dashboard/summary");
+  const myTasks = summary.scope === "TEAM_MEMBER" ? await serverApiFetch<Task[]>("/tasks/my?pageSize=20") : null;
 
   return (
     <div className="flex flex-col gap-4">
@@ -59,6 +64,54 @@ export default async function DashboardPage() {
           ))}
         </CardContent>
       </Card>
+
+      {myTasks && (
+        <Card>
+          <CardHeader>
+            <CardTitle>My tasks</CardTitle>
+            <CardDescription>Update the status of any task assigned to you right here.</CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Project</TableHead>
+                  <TableHead>Priority</TableHead>
+                  <TableHead>Due</TableHead>
+                  <TableHead>Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {myTasks.map((task) => (
+                  <TableRow key={task.id}>
+                    <TableCell>
+                      <Link href={`/tasks/${task.id}`} className="font-medium hover:underline">
+                        {task.title}
+                      </Link>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">{task.project?.name}</TableCell>
+                    <TableCell>
+                      <TaskPriorityBadge priority={task.priority} />
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">{formatDate(task.dueDate)}</TableCell>
+                    <TableCell>
+                      <TaskStatusControl taskId={task.id} status={task.status} />
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {myTasks.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={5} className="py-8 text-center text-muted-foreground">
+                      No tasks assigned to you yet.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
