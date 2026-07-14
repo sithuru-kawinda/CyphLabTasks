@@ -74,6 +74,15 @@ export interface TaskStatusLogEntry {
   changedBy: { id: string; name: string };
 }
 
+export interface TaskComment {
+  id: string;
+  taskId: string;
+  authorId: string;
+  body: string;
+  createdAt: string;
+  author: { id: string; name: string; email: string };
+}
+
 export interface PaginationMeta {
   page: number;
   pageSize: number;

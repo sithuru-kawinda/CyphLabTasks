@@ -1,19 +1,21 @@
 import Link from "next/link";
 import { serverApiFetch } from "@/lib/api";
-import type { ProjectDetail, Task, TaskStatusLogEntry } from "@/types";
+import type { ProjectDetail, Task, TaskComment, TaskStatusLogEntry } from "@/types";
 import { TaskPriorityBadge } from "@/components/shared/StatusBadges";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { formatDate } from "@/lib/dates";
+import { formatDate, formatDateTime } from "@/lib/dates";
 import { TaskDetailActions } from "@/components/tasks/TaskDetailActions";
+import { CommentForm } from "@/components/tasks/CommentForm";
 
 export default async function TaskDetailPage({ params }: { params: Promise<{ taskId: string }> }) {
   const { taskId } = await params;
 
   const task = await serverApiFetch<Task>(`/tasks/${taskId}`);
-  const [project, history] = await Promise.all([
+  const [project, history, comments] = await Promise.all([
     serverApiFetch<ProjectDetail>(`/projects/${task.projectId}`),
     serverApiFetch<TaskStatusLogEntry[]>(`/tasks/${taskId}/history`),
+    serverApiFetch<TaskComment[]>(`/tasks/${taskId}/comments`),
   ]);
 
   const members = project.members.map((m) => m.user);
@@ -33,6 +35,7 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ tas
       <Tabs defaultValue="details">
         <TabsList>
           <TabsTrigger value="details">Details</TabsTrigger>
+          <TabsTrigger value="comments">Comments ({comments.length})</TabsTrigger>
           <TabsTrigger value="activity">Activity</TabsTrigger>
         </TabsList>
         <TabsContent value="details">
@@ -56,6 +59,25 @@ export default async function TaskDetailPage({ params }: { params: Promise<{ tas
                   <div className="text-muted-foreground">Created by</div>
                   <div>{task.creator.name}</div>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="comments">
+          <Card>
+            <CardContent className="flex flex-col gap-4 pt-6">
+              <CommentForm taskId={task.id} />
+              <div className="flex flex-col gap-3">
+                {comments.length === 0 && <p className="text-sm text-muted-foreground">No comments yet.</p>}
+                {comments.map((comment) => (
+                  <div key={comment.id} className="flex flex-col gap-1 border-b pb-3 text-sm last:border-0">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium">{comment.author.name}</span>
+                      <span className="text-xs text-muted-foreground">{formatDateTime(comment.createdAt)}</span>
+                    </div>
+                    <p className="whitespace-pre-wrap text-muted-foreground">{comment.body}</p>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
