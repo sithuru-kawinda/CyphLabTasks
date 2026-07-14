@@ -9,9 +9,11 @@ erDiagram
     USER ||--o{ TASK : "assigned to"
     USER ||--o{ TASK : "created"
     USER ||--o{ TASK_STATUS_LOG : "changed status"
+    USER ||--o{ TASK_COMMENT : "authored"
     PROJECT ||--o{ PROJECT_MEMBER : "has"
     PROJECT ||--o{ TASK : "contains"
     TASK ||--o{ TASK_STATUS_LOG : "has audit trail"
+    TASK ||--o{ TASK_COMMENT : "has"
 
     USER {
         string id PK
@@ -65,6 +67,14 @@ erDiagram
         string changedById FK
         datetime changedAt
     }
+
+    TASK_COMMENT {
+        string id PK
+        string taskId FK
+        string authorId FK
+        string body
+        datetime createdAt
+    }
 ```
 
 ## Notes
@@ -76,4 +86,7 @@ erDiagram
   (see `backend/src/services/task.service.ts::updateTask`) and forms an audit trail, never updated or
   deleted directly.
 - Deleting a `Project` cascades to its `Task`s and `ProjectMember`s; deleting a `Task` cascades to its
-  `TaskStatusLog` entries.
+  `TaskStatusLog` and `TaskComment` entries.
+- `TaskComment` access is scoped by the same `assertProjectAccess` check used for reading a task: any
+  member of the task's project, the project's manager, or an Admin may read and post comments — not
+  limited to the task's assignee (unlike status updates).

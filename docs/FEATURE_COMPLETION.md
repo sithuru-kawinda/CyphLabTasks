@@ -22,6 +22,7 @@ Status as of this submission. "Endpoint" column references `backend/src/routes/*
 | Change a user's role | `PATCH /users/:id` | `/admin/users` (`UserRoleActions`) | ✅ |
 | Activate / deactivate a user | `PATCH /users/:id` (`isActive`) | `/admin/users` (`UserRoleActions`) | ✅ — deactivation is enforced at login (`auth.service.ts::loginUser`/`getCurrentUser` reject inactive users), not merely cosmetic |
 | Full project/task access (bypasses ownership checks) | all project/task routes | `/projects`, `/tasks` | ✅ |
+| Comment on any task | `GET`/`POST /tasks/:id/comments` | `/tasks/[id]` Comments tab | ✅ |
 
 The admin cannot change or deactivate their own account from this screen (self-row shows a "You" badge
 instead of controls) to avoid accidental self-lockout.
@@ -32,13 +33,14 @@ instead of controls) to avoid accidental self-lockout.
 |---|---|---|---|
 | Create a project | `POST /projects` | `ProjectFormDialog` (create mode) | ✅ |
 | Edit own project | `PATCH /projects/:id` | `ProjectFormDialog` (edit mode) | ✅ |
-| Delete a project | `DELETE /projects/:id` | — | Admin-only by design; no PM UI (matches backend rule) |
+| Delete own project | `DELETE /projects/:id` | `DeleteProjectButton` | ✅ — Admin or the project's own manager only (`assertManagerOrAdmin`); a PM cannot delete a project they don't manage |
 | List/view own + member projects | `GET /projects`, `GET /projects/:id` | `/projects`, `/projects/[id]` | ✅ |
 | Add / remove project members | `POST` / `DELETE /projects/:id/members` | `AddMemberDialog`, `RemoveMemberButton` | ✅ |
 | Create tasks in own project | `POST /projects/:id/tasks` | `CreateTaskDialog` | ✅ |
 | Edit any field of a task in own project | `PATCH /tasks/:id` | `EditTaskDialog` | ✅ |
 | Delete a task | `DELETE /tasks/:id` | `TaskDetailActions` | ✅ |
 | Assign tasks (assignee must be a project member) | `PATCH /tasks/:id` | `EditTaskDialog`, `CreateTaskDialog` | ✅ |
+| Comment on tasks in own project | `POST /tasks/:id/comments` | `CommentForm` (task detail, Comments tab) | ✅ |
 
 ## Team Member
 
@@ -48,6 +50,7 @@ instead of controls) to avoid accidental self-lockout.
 | View assigned tasks | `GET /tasks/my` | `/tasks` | ✅ |
 | View a task's detail + status history | `GET /tasks/:id`, `GET /tasks/:id/history` | `/tasks/[id]` | ✅ |
 | Update status of their own assigned task | `PATCH /tasks/:id` (status-only, enforced server-side) | `TaskStatusControl` | ✅ |
+| Comment on tasks in a project they're a member of | `GET`/`POST /tasks/:id/comments` | `/tasks/[id]` Comments tab | ✅ — any project member can comment, not just the task's assignee |
 
 ## Cross-cutting
 

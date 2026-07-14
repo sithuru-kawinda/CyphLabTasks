@@ -39,9 +39,7 @@ Seeded accounts (password `Password123!` for all):
 2. `/projects` → see every project in the system, not just ones you manage.
 3. Open a project you don't manage → confirm you can still edit it and add/remove members (Admin
    bypasses ownership checks).
-4. Open a project's **Delete** action (only Admin can delete a project — a Project Manager viewing the
-   same project should not see this option; verify by logging in as `manager@cyphlab.dev` on a project
-   they don't manage).
+4. Open any project's **Delete** action — Admin can delete any project regardless of who manages it.
 5. `/admin/users` → change `member2@cyphlab.dev`'s role to `PROJECT_MANAGER`, confirm it sticks on
    reload, then change it back. Click **Deactivate** on the same account, then try logging in as that
    user in a different browser/incognito window — login should fail with "Invalid email or password"
@@ -58,8 +56,12 @@ Seeded accounts (password `Password123!` for all):
    "Team members".
 4. **New task** on the project → assign it to `member1@cyphlab.dev`, set a priority and due date.
 5. Edit the task's title/priority/due date directly (`EditTaskDialog`) — should succeed.
-6. Try editing a project you do **not** manage (e.g. the seeded "Website Redesign" demo project, if
-   it's managed by a different PM) — expect a 403 / no edit affordance in the UI.
+6. Open the task and post a comment from the **Comments** tab.
+7. Delete the throwaway project you created in step 2 — the **Delete** button should be visible and
+   work since you manage it.
+8. Try editing/deleting a project you do **not** manage (create a second Project Manager account via
+   `/admin/users` — promote a registered user — and have that PM own a project) — expect no
+   edit/delete affordance in the UI, and a 403 if attempted directly against the API.
 
 ### As Team Member (`member1@cyphlab.dev`)
 
@@ -71,6 +73,8 @@ Seeded accounts (password `Password123!` for all):
 5. Confirm you **cannot** edit the task's title, priority, or assignee (no such controls should be
    exposed to this role — see negative tests below for the API-level guarantee).
 6. Confirm `/projects` does not show projects you're not a member of.
+7. Open the task the PM assigned and post a comment on the **Comments** tab — you don't need to be the
+   assignee to comment, just a member of the task's project.
 
 ## 4. Authorization boundary checks (the part graders look for)
 
@@ -98,20 +102,34 @@ curl -s -b member.txt http://localhost:4000/api/v1/users -w "\n%{http_code}\n"
 # 4. No cookie at all -> expect 401 on any protected route
 curl -s http://localhost:4000/api/v1/projects -w "\n%{http_code}\n"
 
-# 5. Project Manager tries to delete a project (Admin-only route) -> expect 403
+# 5. Project Manager deletes a project THEY manage -> expect 204 (allowed)
 curl -s -c pm.txt -X POST http://localhost:4000/api/v1/auth/login \
   -H "Content-Type: application/json" -d '{"email":"manager@cyphlab.dev","password":"Password123!"}'
-PROJECT_ID="<a project id managed by manager@cyphlab.dev>"
-curl -s -b pm.txt -X DELETE http://localhost:4000/api/v1/projects/$PROJECT_ID -w "\n%{http_code}\n"
+OWN_PROJECT_ID="<a project id managed by manager@cyphlab.dev>"
+curl -s -b pm.txt -X DELETE http://localhost:4000/api/v1/projects/$OWN_PROJECT_ID -w "\n%{http_code}\n"
 
-# 6. Project Manager tries to access/edit a project they don't manage and aren't a member of -> expect 403
+# 6. The SAME Project Manager tries to delete a project managed by someone else -> expect 403
+OTHER_PM_PROJECT_ID="<a project id managed by a different Project Manager>"
+curl -s -b pm.txt -X DELETE http://localhost:4000/api/v1/projects/$OTHER_PM_PROJECT_ID -w "\n%{http_code}\n"
+
+# 7. Project Manager tries to access/edit a project they don't manage and aren't a member of -> expect 403
+
+# 8. Team member tries to post a comment on a task in a project they're NOT a member of -> expect 403
+OTHER_TASK_ID="<a task id in a project member1 is not a member of>"
+curl -s -b member.txt -X POST http://localhost:4000/api/v1/tasks/$OTHER_TASK_ID/comments \
+  -H "Content-Type: application/json" -d '{"body":"Should fail"}' -w "\n%{http_code}\n"
 ```
 
-Expected results: all six return `401`/`403` with `{"error":{"message":"..."}}`, never `200`.
+Expected results: checks 1–4 and 6–8 return `401`/`403` with `{"error":{"message":"..."}}`, never `200`.
+Check 5 (deleting your own managed project) returns `204` with an empty body — that's the positive
+control proving the negative checks aren't just failing for an unrelated reason (e.g. a wrong ID).
 
 ## 5. Validation checks
 
 ```bash
+# PROJECT_ID here should be one you still have (not $OWN_PROJECT_ID from check 5 above, which you deleted)
+PROJECT_ID="demo-project-seed-1"
+
 # Task title too short -> 400 with Zod error message
 curl -s -b pm.txt -X POST http://localhost:4000/api/v1/projects/$PROJECT_ID/tasks \
   -H "Content-Type: application/json" -d '{"title":"a"}' -w "\n%{http_code}\n"
@@ -125,6 +143,11 @@ curl -s -b pm.txt -X POST http://localhost:4000/api/v1/projects/$PROJECT_ID/task
 curl -s -X POST http://localhost:4000/api/v1/auth/register \
   -H "Content-Type: application/json" \
   -d '{"name":"Dup","email":"admin@cyphlab.dev","password":"Password123!"}' -w "\n%{http_code}\n"
+
+# Empty comment body -> 400
+TASK_ID="<any task id you have access to>"
+curl -s -b pm.txt -X POST http://localhost:4000/api/v1/tasks/$TASK_ID/comments \
+  -H "Content-Type: application/json" -d '{"body":""}' -w "\n%{http_code}\n"
 ```
 
 ## 6. Postman

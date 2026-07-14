@@ -26,7 +26,8 @@ flowchart LR
         UC7(("Create project"))
         UC8(("Edit any project"))
         UC9(("Edit own managed project"))
-        UC10(("Delete project"))
+        UC10(("Delete any project"))
+        UC10b(("Delete own managed project"))
         UC11(("View all projects"))
         UC12(("View own / member projects"))
     end
@@ -43,6 +44,7 @@ flowchart LR
         UC18(("View assigned / accessible tasks"))
         UC19(("Update status of own assigned task"))
         UC20(("View task status history"))
+        UC22(("Comment on a task in an accessible project"))
     end
 
     subgraph Dashboard["Dashboard"]
@@ -53,18 +55,18 @@ flowchart LR
     Admin --> UC4 & UC5 & UC6
     Admin --> UC7 & UC8 & UC10 & UC11
     Admin --> UC13 & UC14
-    Admin --> UC15 & UC16 & UC17 & UC18 & UC20
+    Admin --> UC15 & UC16 & UC17 & UC18 & UC20 & UC22
     Admin --> UC21
 
     PM --> UC1 & UC2 & UC3
-    PM --> UC7 & UC9 & UC12
+    PM --> UC7 & UC9 & UC10b & UC12
     PM --> UC13 & UC14
-    PM --> UC15 & UC16 & UC17 & UC18 & UC20
+    PM --> UC15 & UC16 & UC17 & UC18 & UC20 & UC22
     PM --> UC21
 
     TM --> UC1 & UC2 & UC3
     TM --> UC12
-    TM --> UC18 & UC19 & UC20
+    TM --> UC18 & UC19 & UC20 & UC22
     TM --> UC21
 ```
 
@@ -79,4 +81,8 @@ flowchart LR
   `project.service.ts` rather than by two different endpoints.
 - Project Managers can only exercise project/task/member use cases on projects where they are the
   `managerId` (enforced by `assertManagerOrAdmin`) or where they've been added as a member
-  (`assertProjectAccess`).
+  (`assertProjectAccess`). This includes **Delete own managed project** (UC10b) — a PM cannot delete a
+  project managed by a different PM.
+- **Comment on a task** (UC22) uses the broader `assertProjectAccess` check, not the narrower
+  assignee-only check that gates status updates — any member of the task's project can comment, whether
+  or not the task is assigned to them.
