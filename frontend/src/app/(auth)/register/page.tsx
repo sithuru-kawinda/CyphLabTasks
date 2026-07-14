@@ -1,11 +1,13 @@
 import { RegisterForm } from "@/components/auth/RegisterForm";
+import { AuthSplitLayout } from "@/components/auth/AuthSplitLayout";
 
 export default function RegisterPage() {
   return (
-    <div className="flex flex-1 items-center justify-center bg-muted/40 p-4">
-      <div className="w-full max-w-sm">
-        <RegisterForm />
-      </div>
-    </div>
+    <AuthSplitLayout
+      imageSrc="/images/register-illustration.png"
+      imageAlt="Illustration of a person tracking Start, Progress, In Test, and Complete task columns on a phone"
+    >
+      <RegisterForm />
+    </AuthSplitLayout>
   );
 }
