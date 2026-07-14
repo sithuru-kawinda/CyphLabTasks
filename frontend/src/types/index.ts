@@ -84,3 +84,10 @@ export interface Paginated<T> {
   data: T[];
   meta: PaginationMeta;
 }
+
+export type TasksByStatus = Partial<Record<TaskStatus, number>>;
+
+export type DashboardSummary =
+  | { scope: "ADMIN"; userCount: number; projectCount: number; taskCount: number; tasksByStatus: TasksByStatus }
+  | { scope: "PROJECT_MANAGER"; projectCount: number; taskCount: number; tasksByStatus: TasksByStatus }
+  | { scope: "TEAM_MEMBER"; taskCount: number; tasksByStatus: TasksByStatus; overdueCount: number };
