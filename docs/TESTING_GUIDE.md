@@ -175,7 +175,7 @@ curl -s -b pm.txt -X POST http://localhost:4000/api/v1/tasks/$TASK_ID/comments \
 
 ## 6. Postman
 
-Import `docs/api/postman_collection.json`, set the collection's `baseUrl` variable to
+Import `docs/Postman Collection.json`, set the collection's `baseUrl` variable to
 `http://localhost:4000/api/v1`, and run the login request first — Postman will persist the `token`
 cookie for subsequent requests in the same collection run.
 

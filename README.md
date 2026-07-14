@@ -120,7 +120,8 @@ terminals (steps 2 and 3 above).
 
 ## API documentation
 
-A Postman collection covering every endpoint is at `docs/api/postman_collection.json`. Import it into
+A Postman collection covering every endpoint is at `docs/Postman Collection.json` (see also
+`docs/API Documentation.md` for the human-readable reference). Import the collection into
 Postman and set the collection's `baseUrl` variable to `http://localhost:4000/api/v1`.
 
 Every successful response is wrapped as `{ data }` or, for paginated lists, `{ data, meta: { page,
@@ -137,6 +138,8 @@ production build for both packages on every push/PR — see `.github/workflows/c
 - `docs/diagrams/ER Diagram.pdf` — Entity Relationship Diagram
 - `docs/diagrams/Use Case Diagram.pdf` — Use Case Diagram
 - `docs/diagrams/Architecture Diagram.pdf` — System architecture diagram
+- `docs/API Documentation.md` — every endpoint: method, auth/role, request body, response shape, errors
+- `docs/Postman Collection.json` — the same API as an importable Postman collection
 - `docs/FEATURE_COMPLETION.md` — feature completion report
 - `docs/CI_CD.md` — CI/CD pipeline explanation
 - `docs/AI_USAGE.md` — AI tools used during development and what they assisted with
