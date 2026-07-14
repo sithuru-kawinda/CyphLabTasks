@@ -3,10 +3,7 @@ import { AuthSplitLayout } from "@/components/auth/AuthSplitLayout";
 
 export default function LoginPage() {
   return (
-    <AuthSplitLayout
-      imageSrc="/images/login-illustration.png"
-      imageAlt="Illustration of two people planning a project on a giant calendar"
-    >
+    <AuthSplitLayout>
       <LoginForm />
     </AuthSplitLayout>
   );
