@@ -117,10 +117,11 @@ export async function updateProject(user: AuthUser, id: string, input: UpdatePro
   return prisma.project.update({ where: { id }, data: input, include: MEMBER_SELECT });
 }
 
-export async function deleteProject(id: string) {
+export async function deleteProject(user: AuthUser, id: string) {
   const project = await prisma.project.findUnique({ where: { id } });
   if (!project) {
     throw new AppError(404, "Project not found");
   }
+  assertManagerOrAdmin(user, project);
   await prisma.project.delete({ where: { id } });
 }

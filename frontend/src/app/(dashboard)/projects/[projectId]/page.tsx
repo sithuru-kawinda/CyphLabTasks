@@ -8,6 +8,7 @@ import { formatDate } from "@/lib/dates";
 import { ProjectFormDialog } from "@/components/projects/ProjectFormDialog";
 import { AddMemberDialog } from "@/components/projects/AddMemberDialog";
 import { RemoveMemberButton } from "@/components/projects/RemoveMemberButton";
+import { DeleteProjectButton } from "@/components/projects/DeleteProjectButton";
 import { CreateTaskDialog } from "@/components/tasks/CreateTaskDialog";
 
 export default async function ProjectDetailPage({ params }: { params: Promise<{ projectId: string }> }) {
@@ -27,7 +28,10 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           <h1 className="text-2xl font-semibold">{project.name}</h1>
           <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{project.description}</p>
         </div>
-        <ProjectFormDialog mode="edit" project={project} />
+        <div className="flex items-center gap-2">
+          <ProjectFormDialog mode="edit" project={project} />
+          <DeleteProjectButton projectId={project.id} managerId={project.managerId} />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">

@@ -31,6 +31,6 @@ export const update = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const remove = asyncHandler(async (req: Request, res: Response) => {
-  await projectService.deleteProject(req.params.id);
+  await projectService.deleteProject(requireUser(req), req.params.id);
   res.status(204).send();
 });

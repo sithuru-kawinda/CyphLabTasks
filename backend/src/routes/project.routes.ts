@@ -27,7 +27,7 @@ projectRouter.patch(
   validateBody(updateProjectSchema),
   projectController.update,
 );
-projectRouter.delete("/:id", authorize("ADMIN"), projectController.remove);
+projectRouter.delete("/:id", authorize("ADMIN", "PROJECT_MANAGER"), projectController.remove);
 
 projectRouter.get("/:projectId/members", projectMemberController.list);
 projectRouter.post(
