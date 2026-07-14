@@ -36,8 +36,8 @@ Authorization is two-layered — coarse role checks in route middleware (`author
 fine-grained ownership/membership checks inside services (e.g. a Project Manager can only manage their
 own projects; a Team Member can only change the `status` field on tasks assigned to them).
 
-See `docs/diagrams/` for the Entity Relationship Diagram, Use Case Diagram (both PDFs), and system
-architecture diagram (Mermaid source, renders on GitHub).
+See `docs/diagrams/` for the Entity Relationship Diagram, Use Case Diagram, and Architecture Diagram
+(all PDFs).
 
 ## Prerequisites
 
@@ -136,7 +136,7 @@ production build for both packages on every push/PR — see `.github/workflows/c
 
 - `docs/diagrams/ER Diagram.pdf` — Entity Relationship Diagram
 - `docs/diagrams/Use Case Diagram.pdf` — Use Case Diagram
-- `docs/diagrams/architecture.md` — System architecture diagram
+- `docs/diagrams/Architecture Diagram.pdf` — System architecture diagram
 - `docs/FEATURE_COMPLETION.md` — feature completion report
 - `docs/CI_CD.md` — CI/CD pipeline explanation
 - `docs/AI_USAGE.md` — AI tools used during development and what they assisted with
