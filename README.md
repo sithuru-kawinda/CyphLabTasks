@@ -14,15 +14,20 @@ own `node_modules`, run as separate processes. There is no root package manager 
 
 | Capability | Admin | Project Manager | Team Member |
 |---|---|---|---|
-| Manage users (list, change role, activate/deactivate) | ✅ | – | – |
-| Create / edit / delete any project | ✅ | ✅ (own projects) | – |
+| Create a user directly (name/email/password/role) | ✅ | – | – |
+| List users, change role, activate/deactivate, permanently delete | ✅ | – | – |
+| Create / edit any project | ✅ | ✅ (own projects) | – |
+| Delete a project | ✅ (any) | ✅ (own projects only) | – |
 | Add / remove project members | ✅ | ✅ (own projects) | – |
 | Create / edit / delete tasks in a project | ✅ | ✅ (own projects) | – |
+| Assign tasks to project members | ✅ | ✅ | – |
 | View projects & tasks they're a member of | ✅ (all) | ✅ (own) | ✅ (assigned) |
-| Update status of tasks assigned to them | ✅ | ✅ | ✅ |
-| View dashboard summary (project/task counts) | ✅ | ✅ | ✅ |
+| Update status of tasks assigned to them | ✅ | ✅ | ✅ (status-only) |
+| Comment on a task in an accessible project | ✅ | ✅ | ✅ (any project member, not just the assignee) |
+| View dashboard summary (project/task counts); Team Members can also change task status right from the dashboard | ✅ | ✅ | ✅ |
 
-See `docs/FEATURE_COMPLETION.md` for the full, detailed feature checklist.
+See `docs/FEATURE_COMPLETION.md` for the full, detailed feature checklist, and `docs/TESTING_GUIDE.md`
+for a step-by-step manual walkthrough plus `curl`-based authorization boundary checks per role.
 
 ## Architecture
 
@@ -135,6 +140,7 @@ production build for both packages on every push/PR — see `.github/workflows/c
 - `docs/FEATURE_COMPLETION.md` — feature completion report
 - `docs/CI_CD.md` — CI/CD pipeline explanation
 - `docs/AI_USAGE.md` — AI tools used during development and what they assisted with
+- `docs/TESTING_GUIDE.md` — manual UI walkthrough per role + `curl` authorization/validation checks
 
 ## Deployment
 
