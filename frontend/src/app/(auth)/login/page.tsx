@@ -4,14 +4,13 @@ import { LoginForm } from "@/components/auth/LoginForm";
 export default function LoginPage() {
   return (
     <div className="flex flex-1 flex-col md:flex-row">
-      <div className="hidden items-center justify-center bg-primary/5 p-10 md:flex md:w-1/2">
+      <div className="relative hidden bg-primary/5 md:block md:w-1/2">
         <Image
           src="/images/login-illustration.png"
           alt="Illustration of two people planning a project on a giant calendar"
-          width={600}
-          height={520}
+          fill
           priority
-          className="h-auto w-full max-w-md"
+          className="object-cover"
         />
       </div>
       <div className="flex flex-1 items-center justify-center bg-muted/40 p-4">
