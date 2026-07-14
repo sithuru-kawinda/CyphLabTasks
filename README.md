@@ -131,7 +131,7 @@ pageSize, total } }`. Errors are `{ error: { message } }`.
 
 There is no test framework configured yet (no Jest/Vitest runner). CI runs lint, typecheck, and a
 production build for both packages on every push/PR — see `.github/workflows/ci.yml` and
-`docs/CI_CD.md` for details.
+`docs/CI-CD Workflow Explanation.md` for details.
 
 ## Diagrams & reports
 
@@ -141,7 +141,7 @@ production build for both packages on every push/PR — see `.github/workflows/c
 - `docs/API Documentation.md` — every endpoint: method, auth/role, request body, response shape, errors
 - `docs/Postman Collection.json` — the same API as an importable Postman collection
 - `docs/Feature Completion Report.md` — feature completion report
-- `docs/CI_CD.md` — CI/CD pipeline explanation
+- `docs/CI-CD Workflow Explanation.md` — CI/CD pipeline explanation
 - `docs/AI_USAGE.md` — AI tools used during development and what they assisted with
 - `docs/TESTING_GUIDE.md` — manual UI walkthrough per role + `curl` authorization/validation checks
 

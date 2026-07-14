@@ -72,7 +72,7 @@ shows a "You" badge instead of controls) to avoid accidental self-lockout.
 ## Known gaps / next steps
 
 1. No automated test suite — verification for this submission was done via manual end-to-end
-   smoke-testing of every role against the running dev servers (see `docs/CI_CD.md` for what CI
-   actually checks vs. what was manually verified).
+   smoke-testing of every role against the running dev servers (see
+   `docs/CI-CD Workflow Explanation.md` for what CI actually checks vs. what was manually verified).
 2. No live deployment link — hosting accounts were not set up in time for this submission.
 3. No "manage system settings" screen — deliberately out of scope, see the Administrator table above.

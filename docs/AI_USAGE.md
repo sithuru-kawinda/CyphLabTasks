@@ -24,7 +24,8 @@ programmer throughout development.
     (backend logic itself was pre-existing from Day 2).
   - Wrote the GitHub Actions CI workflow (`.github/workflows/ci.yml`).
   - Wrote this documentation set: root `README.md`, ERD/use-case/architecture diagrams
-    (`docs/diagrams/`), `docs/Feature Completion Report.md`, `docs/CI_CD.md`, and this file — all derived by
+    (`docs/diagrams/`), `docs/Feature Completion Report.md`, `docs/CI-CD Workflow Explanation.md`, and
+    this file — all derived by
     reading the actual schema/routes/services rather than written from a generic template.
 
 ## What was not AI-generated
