@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { apiFetch, ApiError } from "@/lib/api";
 import { useAuth } from "@/contexts/AuthContext";
-import type { ProjectStatus } from "@/types";
+import type { ProjectStatus, UserSummary } from "@/types";
 import { Plus } from "lucide-react";
 
 const STATUS_OPTIONS: ProjectStatus[] = ["PLANNED", "ACTIVE", "ON_HOLD", "COMPLETED"];
@@ -42,7 +42,18 @@ export function ProjectFormDialog({ mode, project }: ProjectFormDialogProps) {
   const [name, setName] = useState(project?.name ?? "");
   const [description, setDescription] = useState(project?.description ?? "");
   const [status, setStatus] = useState<ProjectStatus>(project?.status ?? "PLANNED");
+  const [managerId, setManagerId] = useState<string>("");
+  const [managers, setManagers] = useState<UserSummary[]>([]);
   const [submitting, setSubmitting] = useState(false);
+
+  const needsManagerPicker = mode === "create" && user?.role === "ADMIN";
+
+  useEffect(() => {
+    if (!open || !needsManagerPicker) return;
+    apiFetch<UserSummary[]>("/users/assignable")
+      .then((users) => setManagers(users.filter((u) => u.role === "PROJECT_MANAGER")))
+      .catch(() => toast.error("Failed to load project managers"));
+  }, [open, needsManagerPicker]);
 
   if (!user || user.role === "TEAM_MEMBER") {
     return null;
@@ -50,12 +61,16 @@ export function ProjectFormDialog({ mode, project }: ProjectFormDialogProps) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (needsManagerPicker && !managerId) {
+      toast.error("Select a project manager");
+      return;
+    }
     setSubmitting(true);
     try {
       if (mode === "create") {
         await apiFetch("/projects", {
           method: "POST",
-          body: JSON.stringify({ name, description, status }),
+          body: JSON.stringify({ name, description, status, ...(needsManagerPicker ? { managerId } : {}) }),
         });
         toast.success("Project created");
       } else if (project) {
@@ -95,6 +110,26 @@ export function ProjectFormDialog({ mode, project }: ProjectFormDialogProps) {
             <Label htmlFor="project-name">Name</Label>
             <Input id="project-name" required value={name} onChange={(e) => setName(e.target.value)} />
           </div>
+          {needsManagerPicker && (
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="project-manager">Project Manager</Label>
+              <Select value={managerId} onValueChange={(value) => value && setManagerId(value)}>
+                <SelectTrigger id="project-manager" className="w-full">
+                  <SelectValue placeholder="Select a project manager..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {managers.map((pm) => (
+                    <SelectItem key={pm.id} value={pm.id}>
+                      {pm.name} <span className="text-muted-foreground">({pm.email})</span>
+                    </SelectItem>
+                  ))}
+                  {managers.length === 0 && (
+                    <div className="px-2 py-1.5 text-sm text-muted-foreground">No Project Managers found.</div>
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           <div className="flex flex-col gap-2">
             <Label htmlFor="project-description">Description</Label>
             <Textarea
