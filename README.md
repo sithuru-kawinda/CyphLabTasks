@@ -142,7 +142,7 @@ production build for both packages on every push/PR — see `.github/workflows/c
 - `docs/Postman Collection.json` — the same API as an importable Postman collection
 - `docs/Feature Completion Report.md` — feature completion report
 - `docs/CI-CD Workflow Explanation.md` — CI/CD pipeline explanation
-- `docs/AI_USAGE.md` — AI tools used during development and what they assisted with
+- `docs/AI Usage Report.md` — AI tools used during development and what they assisted with
 - `docs/TESTING_GUIDE.md` — manual UI walkthrough per role + `curl` authorization/validation checks
 
 ## Deployment
