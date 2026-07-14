@@ -1,0 +1,143 @@
+# CyphLab — Project & Team Task Management Platform
+
+A full-stack project/task management app with role-based access control for three roles:
+**Admin**, **Project Manager**, and **Team Member**.
+
+- **Frontend**: Next.js 16 (App Router) + React 19, TypeScript, Tailwind CSS v4, shadcn/ui
+- **Backend**: Express + TypeScript REST API, Prisma ORM, MySQL, cookie-based JWT auth
+- **Database**: MySQL 8
+
+This is a two-package repo — `frontend/` and `backend/` are independent npm projects, each with its
+own `node_modules`, run as separate processes. There is no root package manager workspace.
+
+## Features by role
+
+| Capability | Admin | Project Manager | Team Member |
+|---|---|---|---|
+| Manage users (list, change role, activate/deactivate) | ✅ | – | – |
+| Create / edit / delete any project | ✅ | ✅ (own projects) | – |
+| Add / remove project members | ✅ | ✅ (own projects) | – |
+| Create / edit / delete tasks in a project | ✅ | ✅ (own projects) | – |
+| View projects & tasks they're a member of | ✅ (all) | ✅ (own) | ✅ (assigned) |
+| Update status of tasks assigned to them | ✅ | ✅ | ✅ |
+| View dashboard summary (project/task counts) | ✅ | ✅ | ✅ |
+
+See `docs/FEATURE_COMPLETION.md` for the full, detailed feature checklist.
+
+## Architecture
+
+Request flow is strictly layered on the backend: **route → middleware → controller → service → Prisma**.
+Authorization is two-layered — coarse role checks in route middleware (`authorize(...roles)`), and
+fine-grained ownership/membership checks inside services (e.g. a Project Manager can only manage their
+own projects; a Team Member can only change the `status` field on tasks assigned to them).
+
+See `docs/diagrams/` for the Entity Relationship Diagram, Use Case Diagram, and system architecture
+diagram (Mermaid source, renders on GitHub).
+
+## Prerequisites
+
+- Node.js 22+
+- Docker (for local MySQL), or a MySQL 8 / compatible instance you already have running
+
+## Setup
+
+### 1. Start MySQL
+
+From the repo root:
+
+```bash
+docker-compose up -d
+```
+
+This starts a local MySQL 8 instance (`cyphlab-mysql`) on `localhost:3306` with database `cyphlab`,
+user `root` / password `root`.
+
+### 2. Backend
+
+```bash
+cd backend
+npm install
+cp .env.example .env      # edit if your DB credentials/ports differ
+npm run prisma:migrate     # applies the schema to the database
+npm run seed                # seeds demo Admin/PM/2 Members + a demo project
+npm run dev                  # starts the API on http://localhost:4000
+```
+
+### 3. Frontend
+
+In a second terminal:
+
+```bash
+cd frontend
+npm install
+cp .env.example .env.local   # defaults to http://localhost:4000/api/v1 if you skip this
+npm run dev                    # starts the app on http://localhost:3000
+```
+
+### 4. Log in
+
+Open [http://localhost:3000](http://localhost:3000) and log in with one of the seeded demo accounts
+(password `Password123!` for all):
+
+| Role | Email |
+|---|---|
+| Admin | `admin@cyphlab.dev` |
+| Project Manager | `manager@cyphlab.dev` |
+| Team Member | `member1@cyphlab.dev` / `member2@cyphlab.dev` |
+
+## Commands reference
+
+### Backend (`backend/`)
+
+```
+npm run dev              # tsx watch src/index.ts — dev server on PORT (default 4000)
+npm run build              # tsc -p tsconfig.json -> dist/
+npm start                   # node dist/index.js
+npm run lint                 # eslint src --ext .ts
+npm run typecheck            # tsc --noEmit
+npm run prisma:migrate      # prisma migrate dev
+npm run prisma:generate     # prisma generate (needed after pulling schema changes)
+npm run prisma:studio       # prisma studio — browse the DB
+npm run seed                  # seeds demo accounts + a demo project
+```
+
+### Frontend (`frontend/`)
+
+```
+npm run dev      # next dev
+npm run build      # next build
+npm start           # next start
+npm run lint         # eslint
+```
+
+There's no root-level script to run both — start the backend and frontend dev servers in separate
+terminals (steps 2 and 3 above).
+
+## API documentation
+
+A Postman collection covering every endpoint is at `docs/api/postman_collection.json`. Import it into
+Postman and set the collection's `baseUrl` variable to `http://localhost:4000/api/v1`.
+
+Every successful response is wrapped as `{ data }` or, for paginated lists, `{ data, meta: { page,
+pageSize, total } }`. Errors are `{ error: { message } }`.
+
+## Testing & CI
+
+There is no test framework configured yet (no Jest/Vitest runner). CI runs lint, typecheck, and a
+production build for both packages on every push/PR — see `.github/workflows/ci.yml` and
+`docs/CI_CD.md` for details.
+
+## Diagrams & reports
+
+- `docs/diagrams/erd.md` — Entity Relationship Diagram
+- `docs/diagrams/use-case.md` — Use Case Diagram
+- `docs/diagrams/architecture.md` — System architecture diagram
+- `docs/FEATURE_COMPLETION.md` — feature completion report
+- `docs/CI_CD.md` — CI/CD pipeline explanation
+- `docs/AI_USAGE.md` — AI tools used during development and what they assisted with
+
+## Deployment
+
+Not yet deployed. The backend expects a reachable MySQL instance and the env vars documented in
+`backend/.env.example`; the frontend needs `NEXT_PUBLIC_API_URL` pointed at the deployed backend
+(`frontend/.env.example`).
