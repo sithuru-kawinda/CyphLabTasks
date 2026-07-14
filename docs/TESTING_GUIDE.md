@@ -42,6 +42,13 @@ Seeded accounts (password `Password123!` for all):
 4. Open a project's **Delete** action (only Admin can delete a project — a Project Manager viewing the
    same project should not see this option; verify by logging in as `manager@cyphlab.dev` on a project
    they don't manage).
+5. `/admin/users` → change `member2@cyphlab.dev`'s role to `PROJECT_MANAGER`, confirm it sticks on
+   reload, then change it back. Click **Deactivate** on the same account, then try logging in as that
+   user in a different browser/incognito window — login should fail with "Invalid email or password"
+   until you reactivate them. Confirm your own row shows a "You" badge with no editable controls.
+6. As a non-Admin (e.g. `manager@cyphlab.dev`), navigate to `/admin/users` directly — should redirect to
+   `/unauthorized` (enforced by `proxy.ts`, and independently by the `authorize("ADMIN")` route guard on
+   the backend).
 
 ### As Project Manager (`manager@cyphlab.dev`)
 

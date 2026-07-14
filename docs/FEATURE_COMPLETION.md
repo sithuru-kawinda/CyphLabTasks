@@ -17,15 +17,14 @@ Status as of this submission. "Endpoint" column references `backend/src/routes/*
 
 | Feature | Endpoint | UI | Status |
 |---|---|---|---|
-| List all users | `GET /users` | — | ✅ backend only |
-| View a user | `GET /users/:id` | — | ✅ backend only |
-| Change a user's role / active flag | `PATCH /users/:id` | — | ✅ backend only |
-| Deactivate a user | `DELETE /users/:id` (soft: `isActive=false`) | — | ✅ backend only |
+| List all users | `GET /users` | `/admin/users` | ✅ |
+| View a user | `GET /users/:id` | — | ✅ backend only (no single-user detail screen; list view covers the needed fields) |
+| Change a user's role | `PATCH /users/:id` | `/admin/users` (`UserRoleActions`) | ✅ |
+| Activate / deactivate a user | `PATCH /users/:id` (`isActive`) | `/admin/users` (`UserRoleActions`) | ✅ — deactivation is enforced at login (`auth.service.ts::loginUser`/`getCurrentUser` reject inactive users), not merely cosmetic |
 | Full project/task access (bypasses ownership checks) | all project/task routes | `/projects`, `/tasks` | ✅ |
 
-**Gap**: there is no admin-only UI for user management yet (`/admin/users`) — the API is complete and
-covered in the Postman collection, but only reachable via API calls today. `src/proxy.ts` already
-reserves the `/admin` path prefix for this role, anticipating this screen.
+The admin cannot change or deactivate their own account from this screen (self-row shows a "You" badge
+instead of controls) to avoid accidental self-lockout.
 
 ## Project Manager
 
@@ -65,8 +64,7 @@ reserves the `/admin` path prefix for this role, anticipating this screen.
 
 ## Known gaps / next steps
 
-1. No dedicated admin UI screen for user management (backend complete, API-only).
-2. No automated test suite — verification for this submission was done via manual end-to-end
+1. No automated test suite — verification for this submission was done via manual end-to-end
    smoke-testing of every role against the running dev servers (see `docs/CI_CD.md` for what CI
    actually checks vs. what was manually verified).
-3. No live deployment link — hosting accounts were not set up in time for this submission.
+2. No live deployment link — hosting accounts were not set up in time for this submission.
