@@ -60,6 +60,7 @@ shows a "You" badge instead of controls) to avoid accidental self-lockout.
 | Feature | Status |
 |---|---|
 | Role-based dashboard summary | ✅ (backend `GET /dashboard/summary`, UI at `/dashboard`, scoped per role) |
+| Team Member can change task status directly from the dashboard | ✅ (`/dashboard` "My tasks" table, reuses `TaskStatusControl` — no need to open `/tasks/[id]` first) |
 | Task status audit trail (`TaskStatusLog`, append-only, written transactionally) | ✅ |
 | Zod validation on every mutating endpoint | ✅ |
 | Pagination on list endpoints (`page`, `pageSize`, `total`) | ✅ |

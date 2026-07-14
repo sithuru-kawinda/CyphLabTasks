@@ -26,7 +26,7 @@ own `node_modules`, run as separate processes. There is no root package manager 
 | Comment on a task in an accessible project | ✅ | ✅ | ✅ (any project member, not just the assignee) |
 | View dashboard summary (project/task counts); Team Members can also change task status right from the dashboard | ✅ | ✅ | ✅ |
 
-See `docs/FEATURE_COMPLETION.md` for the full, detailed feature checklist, and `docs/TESTING_GUIDE.md`
+See `docs/Feature Completion Report.md` for the full, detailed feature checklist, and `docs/TESTING_GUIDE.md`
 for a step-by-step manual walkthrough plus `curl`-based authorization boundary checks per role.
 
 ## Architecture
@@ -140,7 +140,7 @@ production build for both packages on every push/PR — see `.github/workflows/c
 - `docs/diagrams/Architecture Diagram.pdf` — System architecture diagram
 - `docs/API Documentation.md` — every endpoint: method, auth/role, request body, response shape, errors
 - `docs/Postman Collection.json` — the same API as an importable Postman collection
-- `docs/FEATURE_COMPLETION.md` — feature completion report
+- `docs/Feature Completion Report.md` — feature completion report
 - `docs/CI_CD.md` — CI/CD pipeline explanation
 - `docs/AI_USAGE.md` — AI tools used during development and what they assisted with
 - `docs/TESTING_GUIDE.md` — manual UI walkthrough per role + `curl` authorization/validation checks
