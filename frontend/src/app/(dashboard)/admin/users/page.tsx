@@ -4,15 +4,19 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatDate } from "@/lib/dates";
 import { UserRoleActions } from "@/components/admin/UserRoleActions";
+import { CreateUserDialog } from "@/components/admin/CreateUserDialog";
 
 export default async function AdminUsersPage() {
   const users = await serverApiFetch<User[]>("/users?pageSize=100");
 
   return (
     <div className="flex flex-col gap-4">
-      <div>
-        <h1 className="text-2xl font-semibold">Users</h1>
-        <p className="text-sm text-muted-foreground">Manage roles and account access.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">Users</h1>
+          <p className="text-sm text-muted-foreground">Manage roles and account access.</p>
+        </div>
+        <CreateUserDialog />
       </div>
       <div className="rounded-lg border">
         <Table>

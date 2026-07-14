@@ -37,6 +37,27 @@ export function UserRoleActions({ targetUser }: { targetUser: User }) {
     }
   }
 
+  async function handleHardDelete() {
+    if (
+      !confirm(
+        `Permanently delete ${targetUser.name}? This cannot be undone. Only works if they have no ` +
+          `managed projects, created tasks, or comment/status history — otherwise deactivate instead.`,
+      )
+    ) {
+      return;
+    }
+    setUpdating(true);
+    try {
+      await apiFetch(`/users/${targetUser.id}/hard`, { method: "DELETE" });
+      toast.success("User permanently deleted");
+      router.refresh();
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.message : "Failed to delete user");
+    } finally {
+      setUpdating(false);
+    }
+  }
+
   if (isSelf) {
     return <Badge variant="secondary">You</Badge>;
   }
@@ -66,6 +87,9 @@ export function UserRoleActions({ targetUser }: { targetUser: User }) {
         onClick={() => updateUser({ isActive: !targetUser.isActive })}
       >
         {targetUser.isActive ? "Deactivate" : "Activate"}
+      </Button>
+      <Button variant="destructive" size="sm" disabled={updating} onClick={handleHardDelete}>
+        Delete
       </Button>
     </div>
   );
