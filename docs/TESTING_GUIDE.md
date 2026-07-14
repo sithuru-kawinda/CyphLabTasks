@@ -23,13 +23,14 @@ cd backend  && npm run dev     # http://localhost:4000
 cd frontend && npm run dev      # http://localhost:3000
 ```
 
-Seeded accounts (password `Password123!` for all):
+Seeded accounts:
 
-| Role | Email |
-|---|---|
-| Admin | `admin@cyphlab.dev` |
-| Project Manager | `manager@cyphlab.dev` |
-| Team Member | `member1@cyphlab.dev`, `member2@cyphlab.dev` |
+| Role | Email | Password |
+|---|---|---|
+| Admin | `admin@cyphlab.dev` | `Password123!` |
+| Project Manager | `manager@cyphlab.dev` | `Password123!` |
+| Team Member | `member1@cyphlab.dev` | `Password123!` |
+| Team Member | `member2@cyphlab.dev` | `Password123!` |
 
 ## 3. Manual UI walkthrough, per role
 
