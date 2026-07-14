@@ -38,8 +38,8 @@ export function LoginForm() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Sign in</CardTitle>
+      <CardHeader className="text-center">
+        <CardTitle className="text-3xl font-bold">Sign in</CardTitle>
         <CardDescription>Enter your credentials to access your dashboard.</CardDescription>
       </CardHeader>
       <CardContent>

@@ -39,8 +39,8 @@ export function RegisterForm() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Create an account</CardTitle>
+      <CardHeader className="text-center">
+        <CardTitle className="text-3xl font-bold">Create an account</CardTitle>
         <CardDescription>New accounts start as Team Members. An Admin can change your role.</CardDescription>
       </CardHeader>
       <CardContent>
