@@ -58,6 +58,18 @@
       "name": "Users (Admin)",
       "item": [
         {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New PM\",\n  \"email\": \"new.pm@example.com\",\n  \"password\": \"Password123!\",\n  \"role\": \"PROJECT_MANAGER\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] }
+          }
+        },
+        {
           "name": "List Users",
           "request": {
             "method": "GET",
@@ -98,10 +110,21 @@
           }
         },
         {
-          "name": "Deactivate User",
+          "name": "Deactivate User (soft delete)",
           "request": {
             "method": "DELETE",
             "url": { "raw": "{{baseUrl}}/users/{{userId}}", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}"] }
+          }
+        },
+        {
+          "name": "Permanently Delete User (hard delete)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}/hard",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{userId}}", "hard"]
+            }
           }
         }
       ]

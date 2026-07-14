@@ -17,15 +17,18 @@ Status as of this submission. "Endpoint" column references `backend/src/routes/*
 
 | Feature | Endpoint | UI | Status |
 |---|---|---|---|
+| Create a user directly (name/email/password/role in one step) | `POST /users` | `/admin/users` (`CreateUserDialog`) | ✅ |
 | List all users | `GET /users` | `/admin/users` | ✅ |
 | View a user | `GET /users/:id` | — | ✅ backend only (no single-user detail screen; list view covers the needed fields) |
 | Change a user's role | `PATCH /users/:id` | `/admin/users` (`UserRoleActions`) | ✅ |
-| Activate / deactivate a user | `PATCH /users/:id` (`isActive`) | `/admin/users` (`UserRoleActions`) | ✅ — deactivation is enforced at login (`auth.service.ts::loginUser`/`getCurrentUser` reject inactive users), not merely cosmetic |
+| Activate / deactivate a user (soft delete) | `PATCH /users/:id` (`isActive`) | `/admin/users` (`UserRoleActions`) | ✅ — deactivation is enforced at login (`auth.service.ts::loginUser`/`getCurrentUser` reject inactive users), not merely cosmetic |
+| Permanently delete a user (hard delete) | `DELETE /users/:id/hard` | `/admin/users` (`UserRoleActions`, "Delete") | ✅ — only succeeds if the user has no managed projects, created tasks, or comment/status-change history (all `ON DELETE RESTRICT` at the DB level); otherwise returns a 409 explaining why, telling the admin to reassign the data or deactivate instead. Self-delete is blocked with a 400. |
 | Full project/task access (bypasses ownership checks) | all project/task routes | `/projects`, `/tasks` | ✅ |
 | Comment on any task | `GET`/`POST /tasks/:id/comments` | `/tasks/[id]` Comments tab | ✅ |
+| Manage system settings | — | — | ❌ **Out of scope** — no concrete setting was ever specified (app config, feature flags, etc.); nothing exists to manage, so nothing was built rather than inventing an unused settings screen |
 
-The admin cannot change or deactivate their own account from this screen (self-row shows a "You" badge
-instead of controls) to avoid accidental self-lockout.
+The admin cannot change, deactivate, or permanently delete their own account from this screen (self-row
+shows a "You" badge instead of controls) to avoid accidental self-lockout.
 
 ## Project Manager
 
@@ -71,3 +74,4 @@ instead of controls) to avoid accidental self-lockout.
    smoke-testing of every role against the running dev servers (see `docs/CI_CD.md` for what CI
    actually checks vs. what was manually verified).
 2. No live deployment link — hosting accounts were not set up in time for this submission.
+3. No "manage system settings" screen — deliberately out of scope, see the Administrator table above.

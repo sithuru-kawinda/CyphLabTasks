@@ -47,6 +47,13 @@ Seeded accounts (password `Password123!` for all):
 6. As a non-Admin (e.g. `manager@cyphlab.dev`), navigate to `/admin/users` directly — should redirect to
    `/unauthorized` (enforced by `proxy.ts`, and independently by the `authorize("ADMIN")` route guard on
    the backend).
+7. `/admin/users` → **New user** → create a throwaway account (any role). It should appear in the list
+   immediately, and you should be able to log in with it right away (in an incognito window) without it
+   ever going through `/register`.
+8. Click **Delete** on that same throwaway account (it has no history yet) → should succeed and remove
+   it from the list. Now click **Delete** on `manager@cyphlab.dev` (who manages projects and created
+   tasks) → should fail with a 409 explaining why, since permanent deletion is blocked by that history;
+   use **Deactivate** for accounts like this instead.
 
 ### As Project Manager (`manager@cyphlab.dev`)
 
@@ -118,11 +125,27 @@ curl -s -b pm.txt -X DELETE http://localhost:4000/api/v1/projects/$OTHER_PM_PROJ
 OTHER_TASK_ID="<a task id in a project member1 is not a member of>"
 curl -s -b member.txt -X POST http://localhost:4000/api/v1/tasks/$OTHER_TASK_ID/comments \
   -H "Content-Type: application/json" -d '{"body":"Should fail"}' -w "\n%{http_code}\n"
+
+# 9. Team member tries to create a user (Admin-only) -> expect 403
+curl -s -b member.txt -X POST http://localhost:4000/api/v1/users \
+  -H "Content-Type: application/json" \
+  -d '{"name":"x","email":"x@x.com","password":"Password123!"}' -w "\n%{http_code}\n"
+
+# 10. Admin tries to permanently delete their OWN account -> expect 400
+curl -s -c admin.txt -X POST http://localhost:4000/api/v1/auth/login \
+  -H "Content-Type: application/json" -d '{"email":"admin@cyphlab.dev","password":"Password123!"}'
+ADMIN_ID="<admin@cyphlab.dev's own user id, from GET /users?search=admin>"
+curl -s -b admin.txt -X DELETE http://localhost:4000/api/v1/users/$ADMIN_ID/hard -w "\n%{http_code}\n"
+
+# 11. Admin tries to permanently delete a user who manages a project / created tasks -> expect 409
+MANAGER_ID="<manager@cyphlab.dev's user id>"
+curl -s -b admin.txt -X DELETE http://localhost:4000/api/v1/users/$MANAGER_ID/hard -w "\n%{http_code}\n"
 ```
 
-Expected results: checks 1–4 and 6–8 return `401`/`403` with `{"error":{"message":"..."}}`, never `200`.
-Check 5 (deleting your own managed project) returns `204` with an empty body — that's the positive
-control proving the negative checks aren't just failing for an unrelated reason (e.g. a wrong ID).
+Expected results: checks 1–4, 6–9, and 11 return `401`/`403`/`409` with `{"error":{"message":"..."}}`,
+never `200`. Check 10 (self hard-delete) returns `400`. Check 5 (deleting your own managed project)
+returns `204` with an empty body — that's the positive control proving the negative checks aren't just
+failing for an unrelated reason (e.g. a wrong ID).
 
 ## 5. Validation checks
 
