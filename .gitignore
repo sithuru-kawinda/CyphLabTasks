@@ -24,3 +24,6 @@ Thumbs.db
 .idea/
 .claude/
 
+# Claude Code project instructions (local only, not part of the submission)
+CLAUDE.md
+
